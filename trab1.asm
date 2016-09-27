@@ -1,6 +1,6 @@
 .data
-linhas: .asciiz "Qual o numero de linhas?\n"
-colunas: .asciiz "Qual o numero de colunas?\n"
+intro1: .asciiz "O programa dever receber uma matriz quadrada de ordem 3\n"
+intro2: .asciiz "Insira os elementos na ordem n11[ENTER],n12[ENTER] e assim por diante \n"
 componentes: .asciiz "Introduza as componentes \n"
 saida_L: .asciiz "Matriz L= \n"
 saida_U: .asciiz "Matriz U= \n"
@@ -10,21 +10,12 @@ num_1: .asciiz "1"
 num_0: .asciiz "0"
 .text
 
-##########   PEDE LINHAS   ##########
+##########   INTRO   ##########
 li $v0, 4 # v0 = 4 -> print string
-la $a0, linhas
+la $a0, intro1
 syscall
-li $v0, 5 # v0 = 5 -> read integer
+la $a0, intro2
 syscall
-add $s0, $v0,$zero #$s0 = linhas
-
-##########   PEDE COLUNAS   ##########
-li $v0, 4 # v0 = 4 -> print string
-la $a0, colunas
-syscall
-li $v0, 5 # v0 = 5 -> read integer
-syscall # le inteiro e guarda em v0
-add $s1, $v0,$zero #$s1 = colunas
 
 
 ##########   PEDE COMPONENTES   ##########
@@ -33,8 +24,6 @@ la $a0, componentes
 syscall
 
 
-
-##########   CALCULA L e U   ##########
 li $v0, 6 # v0 = 6 -> read float
 syscall #sycall com v0=6: read float
 mov.s $f1,$f0 # n11 = f1 
@@ -72,7 +61,65 @@ syscall #sycall com v0=6: read float
 mov.s $f9,$f0 # n33 = f9  
 
 # reg $f20 sera o meu temporario
+# $f30 usado para comparar com 0
+mtc1 $zero,$f30 #f30 = 0
 
+##########   TESTA EXCECOES E ATIVA FLAGS   ##########
+##########   SITUACOES EXCECOES, n11 = O; n11 * n22 = n12 * n21  ##########
+
+# n11 = O ?
+c.eq.s $f1,$f30 #resultado em $fcc0, condition flag 0
+bc1f FLAG_0__0
+
+li $s0,1  #$s0 e a flag0 = 1
+j CONT_FLAG_0
+
+FLAG_0__0: li $s0,0
+
+CONT_FLAG_0:
+
+# n11 * n22 = n12 * n21 ?
+mul.s $f28,$f1,$f5
+mul.s $f29,$f2,$f4
+c.eq.s $f28,$f29 #resultado em $fcc1, condition flag 0
+bc1f FLAG_1__0
+
+li $s1,1  #$s1 e a flag1 = 1
+j CONT_FLAG_1
+
+FLAG_1__0: li $s1, 0
+
+CONT_FLAG_1:
+
+
+add $t1,$s0,$s1 #se flag0 e flag1 somarem e derem 2, significa que ambas sao 1
+bne $t1,2,FLAG_2__0
+
+li $s2,1
+j CONT_FLAG_2__1
+
+FLAG_2__0: li $s2,0
+j CONT_FLAG_2__0
+
+CONT_FLAG_2__1:
+# n11 = n12 = 0 -> FLAG_2 = 1
+c.eq.s $f1,$f2
+bc1f CONT_FLAG_3__0
+
+li $s3,1
+j CONT_FLAG_3__1
+
+
+CONT_FLAG_2__0:
+
+CONT_FLAG_3__0: li $s3, 0
+
+CONT_FLAG_3__1:
+
+##########   CALCULA L e U   ##########
+
+case0:
+passo1: ##########   PRIMEIRA PARTE   ##########
 # a21 = n21/n11         ->	f10 = f4 / f1
 div.s $f10,$f4,$f1
 # b22 = n22 - a21 * n12 ->	f13 = f5 - f10 * f2
@@ -82,7 +129,7 @@ sub.s $f13,$f5,$f20
 mul.s $f20,$f10,$f3
 sub.s $f14,$f6,$f20
 
-
+passo2:##########   SEGUNDA PARTE   ##########
 # a31 = n31/n11		->	f11 =  f7 / f1
 div.s $f11,$f7,$f1
 # c32 = n32 - a31 * n12 ->	f15 = f8 - f11 * f2
@@ -92,6 +139,7 @@ sub.s $f15,$f8,$f20
 mul.s $f20,$f11,$f3
 sub.s $f16,$f9,$f20
 
+passo3:##########   TERCEIRA PARTE   ##########
 #sera usado o f21 para a32 pq f12 sera utilizado para o print float do syscall
 # a32 = c32/b22         ->	f21 = f15 / f13
 div.s $f21,$f15,$f13
@@ -99,7 +147,10 @@ div.s $f21,$f15,$f13
 mul.s $f20,$f21,$f14
 sub.s $f17,$f16,$f20
 
-
+case1:
+case2:
+case3.1:
+case3.2:
 
 
 ##########   SAIDA L   ##########
