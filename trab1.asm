@@ -476,9 +476,165 @@ j exit
 
 
 case3_1:########  INICIO CASE 3.1 ###########
+##########   CALCULA L e U   ##########
+
+
+##########   PRIMEIRA PARTE   ##########
+#swap row 3 w/ row 1
+#	f7 f8 f9
+#	f4 f5 f6
+#	f1 f2 f3
+
+##########   SEGUNDA PARTE   ##########
+# 	a21= f10 = f4 / f1
+div.s $f10,$f2,$f5
+
+# b33 =	f14 = f3 - f10 * f6
+mul.s $f20,$f10,$f6
+sub.s $f14,$f3,$f20
+
+##########   TERCEIRA PARTE   ##########
+# ja finalizado
+
+
+##########   SAIDA L   ##########
+#	0 f10 1
+#	0  1  0
+#	1  0  0
+
 li $v0,4 #print string
-la $a0, test_case_3_1
+la $a0, saida_L
+syscall #print saida_L
+
+la $a0, num_0
 syscall
+la $a0, tab
+syscall
+
+#print f10 = a21
+li $v0,2 #print float
+mov.s $f12, $f10
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, enter
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+
+
+##########   SAIDA U   ##########
+#	f7	f8	f9
+#	f4	f5	f6
+#	0	0	f14
+
+li $v0,4 #print string
+la $a0, enter
+syscall
+la $a0, saida_U
+syscall
+
+#print f7
+li $v0,2 #print float
+mov.s $f12, $f7
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f8
+li $v0,2 #print float
+mov.s $f12, $f8
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f9
+li $v0,2 #print float
+mov.s $f12, $f9
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print f4
+li $v0,2 #print float
+mov.s $f12, $f4
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f5
+li $v0,2 #print float
+mov.s $f12, $f5
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f6
+li $v0,2 #print float
+mov.s $f12, $f6
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print f14
+li $v0,2 #print float
+mov.s $f12, $f14
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
 j exit
 ########  FIM CASE 3.1 ###########
 
