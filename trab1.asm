@@ -8,6 +8,10 @@ tab: .asciiz "\t"
 enter: .asciiz "\n"
 num_1: .asciiz "1"
 num_0: .asciiz "0"
+test_case_3_2: .asciiz "ENTROU 3.2"
+test_case_3_1: .asciiz "ENTROU 3.1"
+test_case_2: .asciiz "ENTROU 2"
+test_case_1: .asciiz "ENTROU 1"
 .text
 
 ##########   INTRO   ##########
@@ -93,7 +97,7 @@ CONT_FLAG_1:
 
 
 add $t1,$s0,$s1 #se flag0 e flag1 somarem e derem 2, significa que ambas sao 1
-bne $t1,2,FLAG_2__0
+bne $t1,2,FLAG_2__0 #FLAG2 verifica se ambos os FLAG1 E FLAG0 sao 1 ao mesmo tempo
 
 li $s2,1
 j CONT_FLAG_2__1
@@ -106,7 +110,7 @@ CONT_FLAG_2__1:
 c.eq.s $f1,$f2
 bc1f CONT_FLAG_3__0
 
-li $s3,1
+li $s3,1 #flag 3 define o caso 3, se flag3 = 0 -> 3.1, se flag3 = 1 -> 3.2
 j CONT_FLAG_3__1
 
 
@@ -116,9 +120,24 @@ CONT_FLAG_3__0: li $s3, 0
 
 CONT_FLAG_3__1:
 
+AVALIA_FLAG_3: bne $s3, 1, AVALIA_FLAG_2 #se nao for o caso 3.2 (FLAG 3 = 1) testa se FL2=1,
+# pois se FL2= 1 o caso sera 3.1, se nao, FL0 != FL1 e (p/ FL3= 1 -> FL0=1 E FL1= 1 obrigatoriamente)
+j case3_2
+
+AVALIA_FLAG_2: bne $s2, 1, AVALIA_FLAG_1 #se nao for o caso 3.1 (FLAG 3 = 0 e FLAG2 = 1) testa proximo (p/ FL3= 0 -> FL0=1 E FL1= 1 obrigatoriamente
+j case3_1
+
+# se nao for nenhum dos acima, entao FLAG2=0, logo FLAG_0 e FLAG_1 nao sao 1 ao mesmo tempo
+AVALIA_FLAG_1: bne $s1, 1, AVALIA_FLAG_0 #se nao for o caso 2 (FLAG_1 = 1), testa-se se FLAG_0
+j case2
+
+AVALIA_FLAG_0: bne $s0, 1, case_padrao #se nao for o caso 1 (FLAG_0 = 1), entao nao entra na questao da execao e utiliza-se o caso padrao
+j case1
+
+case_padrao:##########   CASE PADRAO / CASE 0  ##########
 ##########   CALCULA L e U   ##########
 
-case0:
+
 passo1: ##########   PRIMEIRA PARTE   ##########
 # a21 = n21/n11         ->	f10 = f4 / f1
 div.s $f10,$f4,$f1
@@ -146,11 +165,6 @@ div.s $f21,$f15,$f13
 # b33 = c33 - a32*b23   ->	f17 = f16 - f21 * f14 
 mul.s $f20,$f21,$f14
 sub.s $f17,$f16,$f20
-
-case1:
-case2:
-case3.1:
-case3.2:
 
 
 ##########   SAIDA L   ##########
@@ -290,7 +304,39 @@ li $v0,4 #print string
 la $a0, enter
 syscall
 
+j exit
+########  FIM CASE PADRAO ###########
 
-########  EXIT  ###########
+case3_2:########  INICIO CASE 3.2 ###########
+li $v0,4 #print string
+la $a0, test_case_3_2
+syscall
+j exit
+########  FIM CASE 3.2 ###########
+
+
+case3_1:########  INICIO CASE 3.1 ###########
+li $v0,4 #print string
+la $a0, test_case_3_1
+syscall
+j exit
+########  FIM CASE 3.1 ###########
+
+case2:########  INICIO CASE 2 ###########
+li $v0,4 #print string
+la $a0, test_case_2
+syscall
+j exit
+########  FIM CASE 2 ###########
+
+case1:########  INICIO CASE 1 ###########
+li $v0,4 #print string
+la $a0, test_case_1
+syscall
+j exit
+########  FIM CASE 1 ###########
+
+
+exit: ########  EXIT  ###########
 li $v0,10
 syscall #exit
