@@ -6,12 +6,8 @@ saida_L: .asciiz "Matriz L= \n"
 saida_U: .asciiz "Matriz U= \n"
 tab: .asciiz "\t"
 enter: .asciiz "\n"
-num_1: .asciiz "1"
-num_0: .asciiz "0"
-test_case_3_2: .asciiz "ENTROU 3.2"
-test_case_3_1: .asciiz "ENTROU 3.1"
-test_case_2: .asciiz "ENTROU 2"
-test_case_1: .asciiz "ENTROU 1"
+num_1: .asciiz "1.0"
+num_0: .asciiz "0.0"
 .text
 
 ##########   INTRO   ##########
@@ -68,6 +64,28 @@ mov.s $f9,$f0 # n33 = f9
 # $f30 usado para comparar com 0
 mtc1 $zero,$f30 #f30 = 0
 
+##########   TESTA EXCECOES 4 (as 3 linhas sao iguais)   ##########
+
+##########   FIM TESTA EXCECOES 4   ##########
+#	f1	f2	f3
+#	f4	f5	f6
+#	f7	f8	f9
+c.eq.s $f1,$f4
+bc1f NOT_EXFL4
+c.eq.s $f4,$f7
+bc1f NOT_EXFL4
+c.eq.s $f2,$f5
+bc1f NOT_EXFL4
+c.eq.s $f5,$f8
+bc1f NOT_EXFL4
+c.eq.s $f3,$f6
+bc1f NOT_EXFL4
+c.eq.s $f6,$f9
+bc1f NOT_EXFL4
+
+j case4  #se chegou ate aqui, as linhas sao iguais
+
+NOT_EXFL4:
 ##########   TESTA EXCECOES E ATIVA FLAGS   ##########
 ##########   SITUACOES EXCECOES, n11 = O; n11 * n22 = n12 * n21  ##########
 
@@ -809,11 +827,301 @@ j exit
 ########  FIM CASE 2 ###########
 
 case1:########  INICIO CASE 1 ###########
+
+##########   CALCULA L e U   ##########
+
+##########   PRIMEIRA PARTE   ##########
+#swap row 2 with row 1
+#	f4	f5	f6
+#	f1	f2	f3
+#	f7	f8	f9
+
+##########   SEGUNDA PARTE   ##########
+# a31 = f11 =  f7 / f4
+div.s $f11,$f7,$f4
+#b31 = 0
+# c32 =	f15 = f8 - f11 * f5
+mul.s $f20,$f11,$f5
+sub.s $f15,$f8,$f20
+# c33 = f16 = f9 - f11 * f6
+mul.s $f20,$f11,$f6
+sub.s $f16,$f9,$f20
+
+##########   TERCEIRA PARTE   ##########
+#sera usado o f21 para a32 pq f12 sera utilizado para o print float do syscall
+# a32 = f21 = f15 / f2
+div.s $f21,$f15,$f2
+#b32 = 0
+# b33 = f17 = f16 - f21 * f3 
+mul.s $f20,$f21,$f3
+sub.s $f17,$f16,$f20
+
+
+##########   SAIDA L   ##########
+#	0	1	0
+#	1	0	0
+#	f11	f21	1
+
 li $v0,4 #print string
-la $a0, test_case_1
+la $a0, saida_L
+syscall #print saida_L
+
+la $a0, num_0
 syscall
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+#print f11 = a31
+li $v0,2 #print float
+mov.s $f12, $f11
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f21 = a32
+li $v0,2 #print float
+mov.s $f12, $f21
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, enter
+syscall
+
+
+
+##########   SAIDA U   ##########
+#	f4	f5	f6
+#	f1	f2	f3
+#	0	0	f17
+
+li $v0,4 #print string
+la $a0, enter
+syscall
+la $a0, saida_U
+syscall
+
+#print f4
+li $v0,2 #print float
+mov.s $f12, $f4
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f5
+li $v0,2 #print float
+mov.s $f12, $f5
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f6
+li $v0,2 #print float
+mov.s $f12, $f6
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print f1
+li $v0,2 #print float
+mov.s $f12, $f1
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f2
+li $v0,2 #print float
+mov.s $f12, $f2
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f3
+li $v0,2 #print float
+mov.s $f12, $f3
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print f17 = b33
+li $v0,2 #print float
+mov.s $f12, $f17
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
 j exit
 ########  FIM CASE 1 ###########
+
+case4:########  INICIO CASE 4 ###########
+
+##########   SAIDA L   ##########
+li $v0,4 #print string
+la $a0, saida_L
+syscall #print saida_L
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, enter
+syscall
+
+
+##########   SAIDA U   ##########
+
+li $v0,4 #print string
+la $a0, enter
+syscall
+la $a0, saida_U
+syscall
+
+#print f1
+li $v0,2 #print float
+mov.s $f12, $f1
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f2
+li $v0,2 #print float
+mov.s $f12, $f2
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f3
+li $v0,2 #print float
+mov.s $f12, $f3
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+j exit
+
+########  FIM CASE 4 ###########
 
 
 exit: ########  EXIT  ###########
