@@ -639,9 +639,172 @@ j exit
 ########  FIM CASE 3.1 ###########
 
 case2:########  INICIO CASE 2 ###########
+##########   CALCULA L e U   ##########
+
+
+##########   PRIMEIRA PARTE   ##########
+# a21 = n21/n11         ->	f10 = f4 / f1
+div.s $f10,$f4,$f1
+# b22 = 0
+# b23 = n23 - a21 * n13 ->	f14 = f6 - f10 * f3
+mul.s $f20,$f10,$f3
+sub.s $f14,$f6,$f20
+
+##########   SEGUNDA PARTE   ##########
+# a31 = n31/n11		->	f11 =  f7 / f1
+div.s $f11,$f7,$f1
+# b31 = 0
+# b32 = n32 - a31 * n12 ->	f15 = f8 - f11 * f2
+mul.s $f20,$f11,$f2
+sub.s $f15,$f8,$f20
+# b33 = n33 - a31 * n13 ->	f16 = f9 - f11 * f3
+mul.s $f20,$f11,$f3
+sub.s $f16,$f9,$f20
+
+##########   TERCEIRA PARTE   ##########
+#swap row 3 with row 2
+#	f1	f2	f3
+#	0	f15	f16	
+#	0	0	f14
+
+##########   SAIDA L   ##########
+#	1	0	0
+#	f10	0	1	
+#	f11	1	0
 li $v0,4 #print string
-la $a0, test_case_2
+la $a0, saida_L
+syscall #print saida_L
+
+la $a0, num_1
 syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+#print f10 = a21
+li $v0,2 #print float
+mov.s $f12, $f10
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, enter
+syscall
+
+#print f11 = a31
+li $v0,2 #print float
+mov.s $f12, $f11
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+
+
+##########   SAIDA U   ##########
+#	f1	f2	f3
+#	0	f15	f16	
+#	0	0	f14
+
+li $v0,4 #print string
+la $a0, enter
+syscall
+la $a0, saida_U
+syscall
+
+#print f1 
+li $v0,2 #print float
+mov.s $f12, $f1
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f2 
+li $v0,2 #print float
+mov.s $f12, $f2
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f3
+li $v0,2 #print float
+mov.s $f12, $f3
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print f15
+li $v0,2 #print float
+mov.s $f12, $f15
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f16
+li $v0,2 #print float
+mov.s $f12, $f16
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print f14
+li $v0,2 #print float
+mov.s $f12, $f14
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
 j exit
 ########  FIM CASE 2 ###########
 
