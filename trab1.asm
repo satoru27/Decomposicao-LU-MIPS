@@ -135,6 +135,7 @@ AVALIA_FLAG_0: bne $s0, 1, case_padrao #se nao for o caso 1 (FLAG_0 = 1), entao 
 j case1
 
 case_padrao:##########   CASE PADRAO / CASE 0  ##########
+
 ##########   CALCULA L e U   ##########
 
 
@@ -308,9 +309,168 @@ j exit
 ########  FIM CASE PADRAO ###########
 
 case3_2:########  INICIO CASE 3.2 ###########
+
+##########   CALCULA L e U   ##########
+
+##########   PRIMEIRA PARTE   ##########
+
+##########   swapping row2 with row1   ##########
+#primeira row f4 f5 f6
+#             f1 f2 f3
+#             f7 f8 f9
+
+##########   SEGUNDA PARTE   ##########
+##########   mantem o procedimento normal   ##########
+
+# 	a31 = f11 =  f7 / f4
+div.s $f11,$f7,$f4
+# 	b32 = f15 = f8 - f11 * f5
+mul.s $f20,$f11,$f5
+sub.s $f15,$f8,$f20
+# 	b33 = f16 = f9 - f11 * f6
+mul.s $f20,$f11,$f6
+sub.s $f16,$f9,$f20
+
+##########   TERCEIRA PARTE   ##########
+##########   swapping row3 with row2  ##########
+#	f4 f5 f6
+#	0 f15 f16
+#	f1 f2 f3
+
+
+##########   SAIDA L   ##########
 li $v0,4 #print string
-la $a0, test_case_3_2
+la $a0, saida_L
+syscall #print saida_L
+
+la $a0, num_0
 syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, enter
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+li $v0,2 #print float
+mov.s $f12, $f11
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+
+
+##########   SAIDA U   ##########
+
+li $v0,4 #print string
+la $a0, enter
+syscall
+la $a0, saida_U
+syscall
+
+#print f1 = n11 = b11
+li $v0,2 #print float
+mov.s $f12, $f4
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f2 = n12 = b12
+li $v0,2 #print float
+mov.s $f12, $f5
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f3 = n13 = b13
+li $v0,2 #print float
+mov.s $f12, $f6
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print f13 = b22
+li $v0,2 #print float
+mov.s $f12, $f15
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f14 = b23
+li $v0,2 #print float
+mov.s $f12, $f16
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print 0
+la $a0, num_0 # == f1
+syscall
+la $a0, tab
+syscall
+
+#print 0
+la $a0, num_0 # == f2
+syscall
+la $a0, tab
+syscall
+
+#print f17 = b33
+li $v0,2 #print float
+mov.s $f12, $f3
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+j exit
+########  FIM CASE PADRAO ###########
+
+
+
 j exit
 ########  FIM CASE 3.2 ###########
 
