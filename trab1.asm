@@ -24,73 +24,99 @@ la $a0, componentes
 syscall
 
 
-li $v0, 6 # v0 = 6 -> read float
+li $v0, 7 # v0 = 6 -> read float
 syscall #sycall com v0=6: read float
-mov.s $f1,$f0 # n11 = f1 
+mov.d $f2,$f0 # n11 = f1 
 
-#li $v0, 6 # v0 = 6 -> read float
+#li $v0, 7 # v0 = 6 -> read float
 syscall #sycall com v0=6: read float
-mov.s $f2,$f0 # n12 = f2
+mov.d $f4,$f0 # n12 = f2
 
-#li $v0, 6 # v0 = 6 -> read float
+#li $v0, 7 # v0 = 6 -> read float
 syscall #sycall com v0=6: read float
-mov.s $f3,$f0 # n13 = f3
+mov.d $f6,$f0 # n13 = f3
 
-#li $v0, 6 # v0 = 6 -> read float
+#li $v0, 7 # v0 = 6 -> read float
 syscall #sycall com v0=6: read float
-mov.s $f4,$f0 # n21 = f4    
+mov.d $f8,$f0 # n21 = f4    
 
-#li $v0, 6 # v0 = 6 -> read float
+#li $v0, 7 # v0 = 6 -> read float
 syscall #sycall com v0=6: read float
-mov.s $f5,$f0 # n22 = f5  
+mov.d $f10,$f0 # n22 = f5  
 
-#li $v0, 6 # v0 = 6 -> read float
+#li $v0, 7 # v0 = 6 -> read float
 syscall #sycall com v0=6: read float
-mov.s $f6,$f0 # n23 = f6  
+mov.d $f12,$f0 # n23 = f6  
 
-#li $v0, 6 # v0 = 6 -> read float
+#li $v0, 7 # v0 = 6 -> read float
 syscall #sycall com v0=6: read float
-mov.s $f7,$f0 # n31 = f7  
+mov.d $f14,$f0 # n31 = f7  
 
-#li $v0, 6 # v0 = 6 -> read float
+#li $v0, 7 # v0 = 6 -> read float
 syscall #sycall com v0=6: read float
-mov.s $f8,$f0 # n32 = f8  
+mov.d $f16,$f0 # n32 = f8  
 
-#li $v0, 6 # v0 = 6 -> read float
+#li $v0, 7 # v0 = 6 -> read float
 syscall #sycall com v0=6: read float
-mov.s $f9,$f0 # n33 = f9  
+mov.d $f18,$f0 # n33 = f9  
 
 # reg $f20 sera o meu temporario
 # $f30 usado para comparar com 0
 mtc1 $zero,$f30 #f30 = 0
 
+##########   TESTA EXCECOES 5 (as linhas 1 e 3 sao iguais)   ##########
+
+#	f2	f4	f6
+#	f8	f10	f12
+#	f14	f16	f18
+c.eq.d $f2,$f14
+bc1f NOT_EXFL5
+c.eq.d $f8,$f14
+bc1t NOT_EXFL5
+c.eq.d $f4,$f16
+bc1f NOT_EXFL5
+c.eq.d $f10,$f16
+bc1t NOT_EXFL5
+c.eq.d $f6,$f18
+bc1f NOT_EXFL5
+c.eq.d $f12,$f18
+bc1t NOT_EXFL5
+
+j case5  #se chegou ate aqui, as linhas 1 e 3 sao iguais
+##########   FIM TESTA EXCECOES 5   ##########
+
+NOT_EXFL5:
+
 ##########   TESTA EXCECOES 4 (as 3 linhas sao iguais)   ##########
 
-##########   FIM TESTA EXCECOES 4   ##########
-#	f1	f2	f3
-#	f4	f5	f6
-#	f7	f8	f9
-c.eq.s $f1,$f4
+#	f2	f4	f6
+#	f8	f10	f12
+#	f14	f16	f18
+c.eq.d $f2,$f8
 bc1f NOT_EXFL4
-c.eq.s $f4,$f7
+c.eq.d $f8,$f14
 bc1f NOT_EXFL4
-c.eq.s $f2,$f5
+c.eq.d $f4,$f10
 bc1f NOT_EXFL4
-c.eq.s $f5,$f8
+c.eq.d $f10,$f16
 bc1f NOT_EXFL4
-c.eq.s $f3,$f6
+c.eq.d $f6,$f12
 bc1f NOT_EXFL4
-c.eq.s $f6,$f9
+c.eq.d $f12,$f18
 bc1f NOT_EXFL4
 
 j case4  #se chegou ate aqui, as linhas sao iguais
+##########   FIM TESTA EXCECOES 4   ##########
+
+
 
 NOT_EXFL4:
+
 ##########   TESTA EXCECOES E ATIVA FLAGS   ##########
 ##########   SITUACOES EXCECOES, n11 = O; n11 * n22 = n12 * n21  ##########
 
 # n11 = O ?
-c.eq.s $f1,$f30 #resultado em $fcc0, condition flag 0
+c.eq.d $f2,$f30 #resultado em $fcc0, condition flag 0
 bc1f FLAG_0__0
 
 li $s0,1  #$s0 e a flag0 = 1
@@ -101,9 +127,9 @@ FLAG_0__0: li $s0,0
 CONT_FLAG_0:
 
 # n11 * n22 = n12 * n21 ?
-mul.s $f28,$f1,$f5
-mul.s $f29,$f2,$f4
-c.eq.s $f28,$f29 #resultado em $fcc1, condition flag 0
+mul.d $f26,$f2,$f10
+mul.d $f28,$f4,$f8
+c.eq.d $f26,$f28 #resultado em $fcc1, condition flag 0
 bc1f FLAG_1__0
 
 li $s1,1  #$s1 e a flag1 = 1
@@ -125,7 +151,7 @@ j CONT_FLAG_2__0
 
 CONT_FLAG_2__1:
 # n11 = n12 = 0 -> FLAG_2 = 1
-c.eq.s $f1,$f2
+c.eq.d $f2,$f4
 bc1f CONT_FLAG_3__0
 
 li $s3,1 #flag 3 define o caso 3, se flag3 = 0 -> 3.1, se flag3 = 1 -> 3.2
@@ -158,32 +184,32 @@ case_padrao:##########   CASE PADRAO / CASE 0  ##########
 
 
 passo1: ##########   PRIMEIRA PARTE   ##########
-# a21 = n21/n11         ->	f10 = f4 / f1
-div.s $f10,$f4,$f1
-# b22 = n22 - a21 * n12 ->	f13 = f5 - f10 * f2
-mul.s $f20,$f10,$f2
-sub.s $f13,$f5,$f20
-# b23 = n23 - a21 * n13 ->	f14 = f6 - f10 * f3
-mul.s $f20,$f10,$f3
-sub.s $f14,$f6,$f20
+# a21 = n21/n11         ->	f20 = f8 / f2
+div.d $f20,$f8,$f2
+# b22 = n22 - a21 * n12 ->	f24 = f10 - f20 * f4
+mul.d $f22,$f20,$f4
+sub.d $f24,$f10,$f22
+# b23 = n23 - a21 * n13 ->	f26 = f12 - f20 * f6
+mul.d $f22,$f20,$f6
+sub.d $f26,$f12,$f22
 
 passo2:##########   SEGUNDA PARTE   ##########
-# a31 = n31/n11		->	f11 =  f7 / f1
-div.s $f11,$f7,$f1
-# c32 = n32 - a31 * n12 ->	f15 = f8 - f11 * f2
-mul.s $f20,$f11,$f2
-sub.s $f15,$f8,$f20
-# c33 = n33 - a31 * n13 ->	f16 = f9 - f11 * f3
-mul.s $f20,$f11,$f3
-sub.s $f16,$f9,$f20
+# a31 = n31/n11		->	f28 =  f14 / f2
+div.d $f28,$f14,$f2
+# c32 = n32 - a31 * n12 ->	f30 = f16 - f28 * f4
+mul.d $f22,$f28,$f4
+sub.d $f30,$f16,$f22
+# c33 = n33 - a31 * n13 ->	f8 = f18 - f28 * f6
+mul.d $f22,$f28,$f6
+sub.d $f8,$f18,$f22
 
 passo3:##########   TERCEIRA PARTE   ##########
 #sera usado o f21 para a32 pq f12 sera utilizado para o print float do syscall
-# a32 = c32/b22         ->	f21 = f15 / f13
-div.s $f21,$f15,$f13
-# b33 = c33 - a32*b23   ->	f17 = f16 - f21 * f14 
-mul.s $f20,$f21,$f14
-sub.s $f17,$f16,$f20
+# a32 = c32/b22         ->	f10 = f30 / f24
+div.d $f10,$f30,$f24
+# b33 = c33 - a32*b23   ->	f14 = f8 - f10 * f26 
+mul.d $f22,$f10,$f26
+sub.d $f14,$f8,$f22
 
 
 ##########   SAIDA L   ##########
@@ -206,9 +232,9 @@ syscall
 la $a0, enter
 syscall
 
-#print f10 = a12
-li $v0,2 #print float
-mov.s $f12, $f10
+#print f20 = a12
+li $v0,3 #print float
+mov.d $f12, $f20
 syscall
 
 li $v0,4 #print string
@@ -225,9 +251,9 @@ syscall
 la $a0, enter
 syscall
 
-#print f11 = a13
-li $v0,2 #print float
-mov.s $f12, $f11
+#print f28 = a13
+li $v0,3 #print float
+mov.d $f12, $f28
 syscall
 
 li $v0,4 #print string
@@ -235,8 +261,8 @@ la $a0, tab
 syscall
 
 #print f21 = a23
-li $v0,2 #print float
-mov.s $f12, $f21
+li $v0,3 #print float
+mov.d $f12, $f10
 syscall
 li $v0,4 #print string
 la $a0, tab
@@ -257,25 +283,25 @@ syscall
 la $a0, saida_U
 syscall
 
-#print f1 = n11 = b11
-li $v0,2 #print float
-mov.s $f12, $f1
+#print f2 = n11 = b11
+li $v0,3 #print float
+mov.d $f12, $f2
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
-#print f2 = n12 = b12
-li $v0,2 #print float
-mov.s $f12, $f2
+#print f4 = n12 = b12
+li $v0,3 #print float
+mov.d $f12, $f4
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
-#print f3 = n13 = b13
-li $v0,2 #print float
-mov.s $f12, $f3
+#print f6 = n13 = b13
+li $v0,3 #print float
+mov.d $f12, $f6
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -287,17 +313,17 @@ syscall
 la $a0, tab
 syscall
 
-#print f13 = b22
-li $v0,2 #print float
-mov.s $f12, $f13
+#print f24 = b22
+li $v0,3 #print float
+mov.d $f12, $f24
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
-#print f14 = b23
-li $v0,2 #print float
-mov.s $f12, $f14
+#print f26 = b23
+li $v0,3 #print float
+mov.d $f12, $f26
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -316,8 +342,8 @@ la $a0, tab
 syscall
 
 #print f17 = b33
-li $v0,2 #print float
-mov.s $f12, $f17
+li $v0,3 #print float
+mov.d $f12, $f14
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -333,27 +359,29 @@ case3_2:########  INICIO CASE 3.2 ###########
 ##########   PRIMEIRA PARTE   ##########
 
 ##########   swapping row2 with row1   ##########
-#primeira row f4 f5 f6
-#             f1 f2 f3
-#             f7 f8 f9
+#primeira row f8 f10 f12
+#             f2 f4 f6
+#             f14 f16 f18
 
 ##########   SEGUNDA PARTE   ##########
 ##########   mantem o procedimento normal   ##########
 
-# 	a31 = f11 =  f7 / f4
-div.s $f11,$f7,$f4
-# 	b32 = f15 = f8 - f11 * f5
-mul.s $f20,$f11,$f5
-sub.s $f15,$f8,$f20
-# 	b33 = f16 = f9 - f11 * f6
-mul.s $f20,$f11,$f6
-sub.s $f16,$f9,$f20
+# 	a31 = f22 =  f14 / f8
+div.d $f22,$f14,$f8
+# 	b32 = f24 = f16 - f22 * f10
+mul.d $f20,$f22,$f10
+sub.d $f24,$f16,$f20
+# 	b33 = f26 = f18 - f22 * f12
+mul.d $f20,$f22,$f12
+sub.d $f26,$f18,$f20
+
+mov.d $f30,$f12 #passa o valor de f12 para f30 pois f12 sera usado para o print
 
 ##########   TERCEIRA PARTE   ##########
 ##########   swapping row3 with row2  ##########
-#	f4 f5 f6
-#	0 f15 f16
-#	f1 f2 f3
+#	f8 f10 f30
+#	0 f24 f26
+#	f2 f4 f6
 
 
 ##########   SAIDA L   ##########
@@ -391,8 +419,8 @@ syscall
 la $a0, enter
 syscall
 
-li $v0,2 #print float
-mov.s $f12, $f11
+li $v0,3 #print float
+mov.d $f12, $f22
 syscall
 li $v0,4 #print string
 la $a0, tab
@@ -418,25 +446,25 @@ syscall
 la $a0, saida_U
 syscall
 
-#print f1 = n11 = b11
-li $v0,2 #print float
-mov.s $f12, $f4
+
+li $v0,3 #print float
+mov.d $f12, $f8
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
-#print f2 = n12 = b12
-li $v0,2 #print float
-mov.s $f12, $f5
+
+li $v0,3 #print float
+mov.d $f12, $f10
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
-#print f3 = n13 = b13
-li $v0,2 #print float
-mov.s $f12, $f6
+
+li $v0,3 #print float
+mov.d $f12, $f30
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -448,17 +476,17 @@ syscall
 la $a0, tab
 syscall
 
-#print f13 = b22
-li $v0,2 #print float
-mov.s $f12, $f15
+
+li $v0,3 #print float
+mov.d $f12, $f24
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
-#print f14 = b23
-li $v0,2 #print float
-mov.s $f12, $f16
+
+li $v0,3 #print float
+mov.d $f12, $f26
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -476,18 +504,12 @@ syscall
 la $a0, tab
 syscall
 
-#print f17 = b33
-li $v0,2 #print float
-mov.s $f12, $f3
+li $v0,3 #print float
+mov.d $f12, $f6
 syscall
 li $v0,4 #print string
 la $a0, enter
 syscall
-
-j exit
-########  FIM CASE PADRAO ###########
-
-
 
 j exit
 ########  FIM CASE 3.2 ###########
@@ -499,24 +521,25 @@ case3_1:########  INICIO CASE 3.1 ###########
 
 ##########   PRIMEIRA PARTE   ##########
 #swap row 3 w/ row 1
-#	f7 f8 f9
-#	f4 f5 f6
-#	f1 f2 f3
+#	f14 f16 f18
+#	f8 f10 f12
+#	f2 f4 f6
 
 ##########   SEGUNDA PARTE   ##########
-# 	a21= f10 = f4 / f1
-div.s $f10,$f2,$f5
+# 	a21= f22 = f4/f10 
+div.d $f22,$f4,$f10
 
-# b33 =	f14 = f3 - f10 * f6
-mul.s $f20,$f10,$f6
-sub.s $f14,$f3,$f20
+# b33 =	f24 = f6 - f22 * f12
+mul.d $f20,$f22,$f12
+sub.d $f24,$f6,$f20
 
+mov.d $f30,$f12
 ##########   TERCEIRA PARTE   ##########
 # ja finalizado
 
 
 ##########   SAIDA L   ##########
-#	0 f10 1
+#	0 f22 1
 #	0  1  0
 #	1  0  0
 
@@ -530,8 +553,8 @@ la $a0, tab
 syscall
 
 #print f10 = a21
-li $v0,2 #print float
-mov.s $f12, $f10
+li $v0,3 #print float
+mov.d $f12, $f22
 syscall
 li $v0,4 #print string
 la $a0, tab
@@ -575,9 +598,9 @@ syscall
 
 
 ##########   SAIDA U   ##########
-#	f7	f8	f9
-#	f4	f5	f6
-#	0	0	f14
+#	f14	f16	f18
+#	f8	f10	f30
+#	0	0	f24
 
 li $v0,4 #print string
 la $a0, enter
@@ -586,48 +609,48 @@ la $a0, saida_U
 syscall
 
 #print f7
-li $v0,2 #print float
-mov.s $f12, $f7
+li $v0,3 #print float
+mov.d $f12, $f14
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
 #print f8
-li $v0,2 #print float
-mov.s $f12, $f8
+li $v0,3 #print float
+mov.d $f12, $f16
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
 #print f9
-li $v0,2 #print float
-mov.s $f12, $f9
+li $v0,3 #print float
+mov.d $f12, $f18
 syscall
 li $v0,4 #print string
 la $a0, enter
 syscall
 
 #print f4
-li $v0,2 #print float
-mov.s $f12, $f4
+li $v0,3 #print float
+mov.d $f12, $f8
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
 #print f5
-li $v0,2 #print float
-mov.s $f12, $f5
+li $v0,3 #print float
+mov.d $f12, $f10
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
 #print f6
-li $v0,2 #print float
-mov.s $f12, $f6
+li $v0,3 #print float
+mov.d $f12, $f30
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -646,8 +669,8 @@ la $a0, tab
 syscall
 
 #print f14
-li $v0,2 #print float
-mov.s $f12, $f14
+li $v0,3 #print float
+mov.d $f12, $f24
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -661,29 +684,29 @@ case2:########  INICIO CASE 2 ###########
 
 
 ##########   PRIMEIRA PARTE   ##########
-# a21 = n21/n11         ->	f10 = f4 / f1
-div.s $f10,$f4,$f1
+# a21 = n21/n11         ->	f22 = f8 / f2
+div.d $f22,$f8,$f2
 # b22 = 0
-# b23 = n23 - a21 * n13 ->	f14 = f6 - f10 * f3
-mul.s $f20,$f10,$f3
-sub.s $f14,$f6,$f20
+# b23 = n23 - a21 * n13 ->	f24 = f12 - f22 * f6
+mul.d $f20,$f22,$f6
+sub.d $f24,$f12,$f20
 
 ##########   SEGUNDA PARTE   ##########
-# a31 = n31/n11		->	f11 =  f7 / f1
-div.s $f11,$f7,$f1
+# a31 = n31/n11		->	f26 =  f14 / f2
+div.d $f26,$f14,$f2
 # b31 = 0
-# b32 = n32 - a31 * n12 ->	f15 = f8 - f11 * f2
-mul.s $f20,$f11,$f2
-sub.s $f15,$f8,$f20
-# b33 = n33 - a31 * n13 ->	f16 = f9 - f11 * f3
-mul.s $f20,$f11,$f3
-sub.s $f16,$f9,$f20
+# b32 = n32 - a31 * n12 ->	f28 = f16 - f26 * f4
+mul.d $f20,$f26,$f4
+sub.d $f28,$f16,$f20
+# b33 = n33 - a31 * n13 ->	f30 = f18 - f26 * f6
+mul.d $f20,$f26,$f6
+sub.d $f30,$f18,$f20
 
 ##########   TERCEIRA PARTE   ##########
 #swap row 3 with row 2
-#	f1	f2	f3
-#	0	f15	f16	
-#	0	0	f14
+#	f2	f4	f6
+#	0	f28	f30	
+#	0	0	f24
 
 ##########   SAIDA L   ##########
 #	1	0	0
@@ -709,8 +732,8 @@ la $a0, enter
 syscall
 
 #print f10 = a21
-li $v0,2 #print float
-mov.s $f12, $f10
+li $v0,3 #print float
+mov.d $f12, $f22
 syscall
 li $v0,4 #print string
 la $a0, tab
@@ -727,8 +750,8 @@ la $a0, enter
 syscall
 
 #print f11 = a31
-li $v0,2 #print float
-mov.s $f12, $f11
+li $v0,3 #print float
+mov.d $f12, $f26
 syscall
 li $v0,4 #print string
 la $a0, tab
@@ -747,9 +770,9 @@ syscall
 
 
 ##########   SAIDA U   ##########
-#	f1	f2	f3
-#	0	f15	f16	
-#	0	0	f14
+#	f2	f4	f6
+#	0	f28	f30	
+#	0	0	f24
 
 li $v0,4 #print string
 la $a0, enter
@@ -758,24 +781,24 @@ la $a0, saida_U
 syscall
 
 #print f1 
-li $v0,2 #print float
-mov.s $f12, $f1
+li $v0,3 #print float
+mov.d $f12, $f2
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
 #print f2 
-li $v0,2 #print float
-mov.s $f12, $f2
+li $v0,3 #print float
+mov.d $f12, $f4
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
 #print f3
-li $v0,2 #print float
-mov.s $f12, $f3
+li $v0,3 #print float
+mov.d $f12, $f6
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -788,16 +811,16 @@ la $a0, tab
 syscall
 
 #print f15
-li $v0,2 #print float
-mov.s $f12, $f15
+li $v0,3 #print float
+mov.d $f12, $f28
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
 #print f16
-li $v0,2 #print float
-mov.s $f12, $f16
+li $v0,3 #print float
+mov.d $f12, $f30
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -816,8 +839,8 @@ la $a0, tab
 syscall
 
 #print f14
-li $v0,2 #print float
-mov.s $f12, $f14
+li $v0,3 #print float
+mov.d $f12, $f24
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -832,35 +855,35 @@ case1:########  INICIO CASE 1 ###########
 
 ##########   PRIMEIRA PARTE   ##########
 #swap row 2 with row 1
-#	f4	f5	f6
-#	f1	f2	f3
-#	f7	f8	f9
+#	f8	f10	f12
+#	f2	f4	f6
+#	f14	f16	f18
 
 ##########   SEGUNDA PARTE   ##########
-# a31 = f11 =  f7 / f4
-div.s $f11,$f7,$f4
+# a31 = f22 =  f14 / f8
+div.d $f22,$f14,$f8
 #b31 = 0
-# c32 =	f15 = f8 - f11 * f5
-mul.s $f20,$f11,$f5
-sub.s $f15,$f8,$f20
-# c33 = f16 = f9 - f11 * f6
-mul.s $f20,$f11,$f6
-sub.s $f16,$f9,$f20
+# c32 =	f24 = f16 - f22 * f10
+mul.d $f20,$f22,$f10
+sub.d $f24,$f16,$f20
+# c33 = f26 = f18 - f22 * f12
+mul.d $f20,$f22,$f12
+sub.d $f26,$f18,$f20
 
 ##########   TERCEIRA PARTE   ##########
 #sera usado o f21 para a32 pq f12 sera utilizado para o print float do syscall
-# a32 = f21 = f15 / f2
-div.s $f21,$f15,$f2
+# a32 = f28 = f24 / f4
+div.d $f28,$f24,$f4
 #b32 = 0
-# b33 = f17 = f16 - f21 * f3 
-mul.s $f20,$f21,$f3
-sub.s $f17,$f16,$f20
+# b33 = f17 = f16 - f28 * f6 
+mul.d $f20,$f28,$f6
+sub.d $f26,$f26,$f20
 
-
+mov.d $f30,$f12
 ##########   SAIDA L   ##########
 #	0	1	0
 #	1	0	0
-#	f11	f21	1
+#	f22	f28	1
 
 li $v0,4 #print string
 la $a0, saida_L
@@ -896,17 +919,17 @@ syscall
 la $a0, enter
 syscall
 
-#print f11 = a31
-li $v0,2 #print float
-mov.s $f12, $f11
+#print f22 = a31
+li $v0,3 #print float
+mov.d $f12, $f22
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
-#print f21 = a32
-li $v0,2 #print float
-mov.s $f12, $f21
+#print f28 = a32
+li $v0,3 #print float
+mov.d $f12, $f28
 syscall
 li $v0,4 #print string
 la $a0, tab
@@ -920,9 +943,9 @@ syscall
 
 
 ##########   SAIDA U   ##########
-#	f4	f5	f6
-#	f1	f2	f3
-#	0	0	f17
+#	f8	f10	f30
+#	f2	f4	f6
+#	0	0	f26
 
 li $v0,4 #print string
 la $a0, enter
@@ -930,49 +953,49 @@ syscall
 la $a0, saida_U
 syscall
 
-#print f4
-li $v0,2 #print float
-mov.s $f12, $f4
+#print f8
+li $v0,3 #print float
+mov.d $f12, $f8
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
-#print f5
-li $v0,2 #print float
-mov.s $f12, $f5
+#print f10
+li $v0,3 #print float
+mov.d $f12, $f10
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f30
+li $v0,3 #print float
+mov.d $f12, $f30
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print f2
+li $v0,3 #print float
+mov.d $f12, $f2
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f4
+li $v0,3 #print float
+mov.d $f12, $f4
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
 #print f6
-li $v0,2 #print float
-mov.s $f12, $f6
-syscall
-li $v0,4 #print string
-la $a0, enter
-syscall
-
-#print f1
-li $v0,2 #print float
-mov.s $f12, $f1
-syscall
-li $v0,4 #print string
-la $a0, tab
-syscall
-
-#print f2
-li $v0,2 #print float
-mov.s $f12, $f2
-syscall
-li $v0,4 #print string
-la $a0, tab
-syscall
-
-#print f3
-li $v0,2 #print float
-mov.s $f12, $f3
+li $v0,3 #print float
+mov.d $f12, $f6
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -990,9 +1013,9 @@ syscall
 la $a0, tab
 syscall
 
-#print f17 = b33
-li $v0,2 #print float
-mov.s $f12, $f17
+#print f26 = b33
+li $v0,3 #print float
+mov.d $f12, $f26
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -1008,6 +1031,7 @@ li $v0,4 #print string
 la $a0, saida_L
 syscall #print saida_L
 
+
 la $a0, num_1
 syscall
 la $a0, tab
@@ -1063,24 +1087,24 @@ la $a0, saida_U
 syscall
 
 #print f1
-li $v0,2 #print float
-mov.s $f12, $f1
+li $v0,3 #print float
+mov.d $f12, $f2
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
 #print f2
-li $v0,2 #print float
-mov.s $f12, $f2
+li $v0,3 #print float
+mov.d $f12, $f4
 syscall
 li $v0,4 #print string
 la $a0, tab
 syscall
 
 #print f3
-li $v0,2 #print float
-mov.s $f12, $f3
+li $v0,3 #print float
+mov.d $f12, $f6
 syscall
 li $v0,4 #print string
 la $a0, enter
@@ -1122,6 +1146,165 @@ syscall
 j exit
 
 ########  FIM CASE 4 ###########
+
+case5:##########   CASE 5  ##########
+
+##########   CALCULA L e U   ##########
+
+
+##########   PRIMEIRA PARTE   ##########
+# a21 = n21/n11         ->	f22 = f8 / f2
+div.d $f22,$f8,$f2
+# b22 = n22 - a21 * n12 ->	f24 = f10 - f20 * f4
+mul.d $f20,$f22,$f4
+sub.d $f24,$f10,$f20
+# b23 = n23 - a21 * n13 ->	f26 = f12 - f20 * f6
+mul.d $f20,$f22,$f6
+sub.d $f26,$f12,$f20
+
+##########   SEGUNDA PARTE   ##########
+
+
+##########   TERCEIRA PARTE   ##########
+
+
+
+##########   SAIDA L   ##########
+#	1	0	0
+#	f22	1	0
+#	1	0	1
+
+li $v0,4 #print string
+la $a0, saida_L
+syscall #print saida_L
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+#print f20 = a12
+li $v0,3 #print float
+mov.d $f12, $f22
+syscall
+
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+la $a0, num_1
+syscall
+la $a0, tab
+syscall
+
+
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_1
+syscall
+la $a0, enter
+syscall
+
+
+
+##########   SAIDA U   ##########
+#	f2	f4	f6
+#	0	f24	f26
+#	0	0	0
+li $v0,4 #print string
+la $a0, enter
+syscall
+la $a0, saida_U
+syscall
+
+#print f2 = n11 = b11
+li $v0,3 #print float
+mov.d $f12, $f2
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f4 = n12 = b12
+li $v0,3 #print float
+mov.d $f12, $f4
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f6 = n13 = b13
+li $v0,3 #print float
+mov.d $f12, $f6
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print f24 = b22
+li $v0,3 #print float
+mov.d $f12, $f24
+syscall
+li $v0,4 #print string
+la $a0, tab
+syscall
+
+#print f26 = b23
+li $v0,3 #print float
+mov.d $f12, $f26
+syscall
+li $v0,4 #print string
+la $a0, enter
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+#print 0
+la $a0, num_0
+syscall
+la $a0, tab
+syscall
+
+la $a0, num_0
+syscall
+la $a0, enter
+syscall
+
+j exit
+########  FIM CASE 5 ###########
 
 
 exit: ########  EXIT  ###########
